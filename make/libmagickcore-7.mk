@@ -95,7 +95,6 @@ LOCAL_SRC_FILES += \
     $(IMAGE_MAGICK)/coders/gray.c \
     $(IMAGE_MAGICK)/coders/hald.c \
     $(IMAGE_MAGICK)/coders/hdr.c \
-    $(IMAGE_MAGICK)/coders/heic.c \
     $(IMAGE_MAGICK)/coders/histogram.c \
     $(IMAGE_MAGICK)/coders/hrz.c \
     $(IMAGE_MAGICK)/coders/html.c \
