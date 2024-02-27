@@ -1,7 +1,7 @@
 
 # Android ImageMagick 7.1.1-29
 
-[![Build](https://github.com/Miseryset/Android-ImageMagick7/actions/workflows/build.yml/badge.svg?event=push)](https://github.com/Miseryset/Android-ImageMagick7/actions/workflows/build.yml) [![CodeQL](https://github.com/MolotovCherry/Android-ImageMagick7/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/MolotovCherry/Android-ImageMagick7/actions/workflows/codeql-analysis.yml) ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/Miseryset/Android-ImageMagick7?style=plastic)
+[![Build](https://github.com/Miseryset/Android-ImageMagick7/actions/workflows/build.yml/badge.svg?event=push)](https://github.com/Miseryset/Android-ImageMagick7/actions/workflows/build.yml) [![CodeQL](https://github.com/Miseryset/Android-ImageMagick7/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Miseryset/Android-ImageMagick7/actions/workflows/codeql-analysis.yml) ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/Miseryset/Android-ImageMagick7?style=plastic)
 
 *This is a developement libary, NOT an app. There is no "APK". There are binaries you can use however. If you want an app, termux has their own imagemagick package*
 
