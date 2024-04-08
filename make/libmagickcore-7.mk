@@ -95,6 +95,7 @@ LOCAL_SRC_FILES += \
     $(IMAGE_MAGICK)/coders/gray.c \
     $(IMAGE_MAGICK)/coders/hald.c \
     $(IMAGE_MAGICK)/coders/hdr.c \
+    $(IMAGE_MAGICK)/coders/heic.c \
     $(IMAGE_MAGICK)/coders/histogram.c \
     $(IMAGE_MAGICK)/coders/hrz.c \
     $(IMAGE_MAGICK)/coders/html.c \
@@ -171,6 +172,7 @@ LOCAL_SRC_FILES += \
     $(IMAGE_MAGICK)/coders/tim2.c \
     $(IMAGE_MAGICK)/coders/ttf.c \
     $(IMAGE_MAGICK)/coders/txt.c \
+    $(IMAGE_MAGICK)/coders/uhdr.c \
     $(IMAGE_MAGICK)/coders/uil.c \
     $(IMAGE_MAGICK)/coders/url.c \
     $(IMAGE_MAGICK)/coders/uyvy.c \
