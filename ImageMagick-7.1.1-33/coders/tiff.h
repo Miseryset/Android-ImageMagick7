@@ -12,21 +12,28 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-
-  MagickWand convert command-line method.
 */
-#ifndef MAGICKWAND_CONVERT_H
-#define MAGICKWAND_CONVERT_H
+
+#include "coders/coders-private.h"
+
+#define MagickTIFFHeaders \
+  MagickCoderHeader("TIFF", 0, "MM\x00\x2a") \
+  MagickCoderHeader("TIFF", 0, "II\x2a\x00") \
+  MagickCoderHeader("TIFF64", 0, "MM\x00\x2b\x00\x08\x00\x00") \
+  MagickCoderHeader("TIFF64", 0, "II\x2b\x00\x08\x00\x00\x00")
+
+#define MagickTIFFAliases \
+  MagickCoderAlias("TIFF", "GROUP4") \
+  MagickCoderAlias("TIFF", "PTIF") \
+  MagickCoderAlias("TIFF", "TIF") \
+  MagickCoderAlias("TIFF", "TIFF64")
 
 #if defined(__cplusplus) || defined(c_plusplus)
 extern "C" {
 #endif
 
-extern WandExport MagickBooleanType
-  ConvertImageCommand(ImageInfo *,int,char **,char **,ExceptionInfo *);
+MagickCoderExports(TIFF)
 
 #if defined(__cplusplus) || defined(c_plusplus)
 }
-#endif
-
 #endif

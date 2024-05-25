@@ -3,21 +3,21 @@
 %                                                                             %
 %                                                                             %
 %                                                                             %
-%                CCCC   OOO   N   N  V   V  EEEEE  RRRR   TTTTT               %
-%               C      O   O  NN  N  V   V  E      R   R    T                 %
-%               C      O   O  N N N  V   V  EEE    RRRR     T                 %
-%               C      O   O  N  NN   V V   E      R R      T                 %
-%                CCCC   OOO   N   N    V    EEEEE  R  R     T                 %
+%        DDDD   EEEEE  PPPP   RRRR   EEEEE   CCCC   AAA   TTTTT  EEEEE        %
+%        D   D  E      P   P  R   R  E      C      A   A    T    E            %
+%        D   D  EEE    PPPPP  RRRR   EEE    C      AAAAA    T    EEE          %
+%        D   D  E      P      R R    E      C      A   A    T    E            %
+%        DDDD   EEEEE  P      R  R   EEEEE   CCCC  A   A    T    EEEEE        %
 %                                                                             %
 %                                                                             %
-%                Convert an image from one format to another.                 %
+%                       MagickWand Deprecated Methods                         %
 %                                                                             %
 %                              Software Design                                %
 %                                   Cristy                                    %
-%                                April 1992                                   %
+%                                October 2002                                 %
 %                                                                             %
 %                                                                             %
-%  Copyright @ 1999 ImageMagick Studio LLC, a non-profit organization         %
+%  Copyright @ 2002 ImageMagick Studio LLC, a non-profit organization         %
 %  dedicated to making software imaging solutions freely available.           %
 %                                                                             %
 %  You may not use this file except in compliance with the License.  You may  %
@@ -33,9 +33,7 @@
 %                                                                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%  Use the convert program to convert between image formats as well as resize
-%  an image, blur, crop, despeckle, dither, draw on, flip, join, re-sample,
-%  and much more.
+%
 %
 */
 
@@ -44,10 +42,16 @@
 */
 #include "MagickWand/studio.h"
 #include "MagickWand/MagickWand.h"
+#include "MagickWand/magick-wand-private.h"
 #include "MagickWand/mogrify-private.h"
+#include "MagickWand/wand.h"
 #include "MagickCore/exception-private.h"
+#include "MagickCore/monitor-private.h"
 #include "MagickCore/string-private.h"
+#include "MagickCore/thread-private.h"
 #include "MagickCore/utility-private.h"
+
+#if !defined(MAGICKCORE_EXCLUDE_DEPRECATED)
 
 /*
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -547,6 +551,8 @@ WandExport MagickBooleanType ConvertImageCommand(ImageInfo *image_info,
   assert(exception != (ExceptionInfo *) NULL);
   if (IsEventLogging() != MagickFalse)
     (void) LogMagickEvent(TraceEvent,GetMagickModule(),"...");
+  (void) FormatLocaleFile(stderr,"WARNING: %s\n",
+        "The convert command is deprecated in IMv7, use \"magick\"\n");
   if (argc == 2)
     {
       option=argv[1];
@@ -3381,3 +3387,80 @@ WandExport MagickBooleanType ConvertImageCommand(ImageInfo *image_info,
   DestroyConvert();
   return(status != 0 ? MagickTrue : MagickFalse);
 }
+
+/*
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+%                                                                             %
+%                                                                             %
+%   M a g i c k G e t I m a g e A l p h a C o l o r                           %
+%                                                                             %
+%                                                                             %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  MagickGetImageAlphaColor() returns the image alpha color.
+%
+%  The format of the MagickGetImageAlphaColor method is:
+%
+%      MagickBooleanType MagickGetImageAlphaColor(MagickWand *wand,
+%        PixelWand *alpha_color)
+%
+%  A description of each parameter follows:
+%
+%    o wand: the magick wand.
+%
+%    o alpha_color: return the alpha color.
+%
+*/
+WandExport MagickBooleanType MagickGetImageAlphaColor(MagickWand *wand,
+  PixelWand *alpha_color)
+{
+  assert(wand != (MagickWand *)NULL);
+  assert(wand->signature == MagickWandSignature);
+  if (wand->debug != MagickFalse)
+    (void) LogMagickEvent(WandEvent,GetMagickModule(),"%s",wand->name);
+  if (wand->images == (Image *)NULL)
+    ThrowWandException(WandError, "ContainsNoImages", wand->name);
+  PixelSetPixelColor(alpha_color,&wand->images->matte_color);
+  return(MagickTrue);
+}
+
+/*
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                             %
+%                                                                             %
+%                                                                             %
+%   M a g i c k S e t I m a g e A l p h a C o l o r                           %
+%                                                                             %
+%                                                                             %
+%                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%  MagickSetImageAlphaColor() sets the image alpha color.
+%
+%  The format of the MagickSetImageAlphaColor method is:
+%
+%      MagickBooleanType MagickSetImageAlphaColor(MagickWand *wand,
+%        const PixelWand *matte)
+%
+%  A description of each parameter follows:
+%
+%    o wand: the magick wand.
+%
+%    o matte: the alpha pixel wand.
+%
+*/
+WandExport MagickBooleanType MagickSetImageAlphaColor(MagickWand *wand,
+  const PixelWand *alpha)
+{
+  assert(wand != (MagickWand *)NULL);
+  assert(wand->signature == MagickWandSignature);
+  if (wand->debug != MagickFalse)
+    (void) LogMagickEvent(WandEvent,GetMagickModule(),"%s",wand->name);
+  if (wand->images == (Image *)NULL)
+    ThrowWandException(WandError,"ContainsNoImages",wand->name);
+  PixelGetQuantumPacket(alpha,&wand->images->matte_color);
+  return(MagickTrue);
+}
+#endif
