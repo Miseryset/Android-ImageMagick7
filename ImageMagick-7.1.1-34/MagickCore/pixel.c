@@ -5440,28 +5440,26 @@ MagickExport MagickBooleanType InterpolatePixelInfo(const Image *image,
   const CacheView_ *image_view,const PixelInterpolateMethod method,
   const double x,const double y,PixelInfo *pixel,ExceptionInfo *exception)
 {
-  MagickBooleanType
-    status;
+  const Quantum
+    *p;
 
   double
     alpha[16],
     gamma;
 
+  MagickBooleanType
+    status;
+
   PixelInfo
     pixels[16];
 
-  const Quantum
-    *p;
-
-  ssize_t
-    i;
-
-  ssize_t
-    x_offset,
-    y_offset;
-
   PixelInterpolateMethod
     interpolate;
+
+  ssize_t
+    i,
+    x_offset,
+    y_offset;
 
   assert(image != (Image *) NULL);
   assert(image->signature == MagickCoreSignature);
@@ -5490,12 +5488,13 @@ MagickExport MagickBooleanType InterpolatePixelInfo(const Image *image,
           x_offset=CastDoubleToLong(floor(x+0.5)-1.0);
           y_offset=CastDoubleToLong(floor(y+0.5)-1.0);
         }
-      else if (interpolate == Average16InterpolatePixel)
-        {
-          count=4;
-          x_offset--;
-          y_offset--;
-        }
+      else
+        if (interpolate == Average16InterpolatePixel)
+          {
+            count=4;
+            x_offset--;
+            y_offset--;
+          }
       p=GetCacheViewVirtualPixels(image_view,x_offset,y_offset,(size_t) count,
         (size_t) count,exception);
       if (p == (const Quantum *) NULL)
@@ -5503,6 +5502,11 @@ MagickExport MagickBooleanType InterpolatePixelInfo(const Image *image,
           status=MagickFalse;
           break;
         }
+      pixel->red=0.0;
+      pixel->green=0.0;
+      pixel->blue=0.0;
+      pixel->black=0.0;
+      pixel->alpha=0.0;
       count*=count;  /* number of pixels - square of size */
       for (i=0; i < (ssize_t) count; i++)
       {
@@ -5513,7 +5517,7 @@ MagickExport MagickBooleanType InterpolatePixelInfo(const Image *image,
         pixel->blue+=gamma*pixels[0].blue;
         pixel->black+=gamma*pixels[0].black;
         pixel->alpha+=pixels[0].alpha;
-        p += GetPixelChannels(image);
+        p+=GetPixelChannels(image);
       }
       gamma=1.0/count;   /* average weighting of each pixel in area */
       pixel->red*=gamma;
