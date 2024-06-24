@@ -748,6 +748,7 @@ MagickExport MagickBooleanType LoadFontConfigFonts(SplayTreeInfo *type_cache,
     status;
 
   int
+    index,
     slant,
     width,
     weight;
@@ -771,7 +772,7 @@ MagickExport MagickBooleanType LoadFontConfigFonts(SplayTreeInfo *type_cache,
   FcConfigSetRescanInterval(font_config,0);
   font_set=(FcFontSet *) NULL;
   object_set=FcObjectSetBuild(FC_FULLNAME,FC_FAMILY,FC_STYLE,FC_SLANT,
-    FC_WIDTH,FC_WEIGHT,FC_FILE,(char *) NULL);
+    FC_WIDTH,FC_WEIGHT,FC_FILE,FC_INDEX,(char *) NULL);
   if (object_set != (FcObjectSet *) NULL)
     {
       pattern=FcPatternCreate();
@@ -825,6 +826,9 @@ MagickExport MagickBooleanType LoadFontConfigFonts(SplayTreeInfo *type_cache,
     type_info->name=ConstantString(name);
     (void) SubstituteString(&type_info->name," ","-");
     type_info->family=ConstantString((const char *) family);
+    status=FcPatternGetInteger(font_set->fonts[i],FC_INDEX,0,&index);
+    if (status == FcResultMatch)
+      type_info->face=index;
     status=FcPatternGetInteger(font_set->fonts[i],FC_SLANT,0,&slant);
     type_info->style=NormalStyle;
     if (slant == FC_SLANT_ITALIC)
@@ -932,9 +936,6 @@ static MagickBooleanType IsTypeTreeInstantiated(ExceptionInfo *exception)
 */
 MagickExport MagickBooleanType ListTypeInfo(FILE *file,ExceptionInfo *exception)
 {
-  char
-    weight[MagickPathExtent];
-
   const char
     *family,
     *glyphs,
@@ -958,7 +959,6 @@ MagickExport MagickBooleanType ListTypeInfo(FILE *file,ExceptionInfo *exception)
   type_info=GetTypeInfoList("*",&number_fonts,exception);
   if (type_info == (const TypeInfo **) NULL)
     return(MagickFalse);
-  *weight='\0';
   path=(const char *) NULL;
   for (i=0; i < (ssize_t) number_fonts; i++)
   {
@@ -980,14 +980,15 @@ MagickExport MagickBooleanType ListTypeInfo(FILE *file,ExceptionInfo *exception)
     glyphs="unknown";
     if (type_info[i]->glyphs != (char *) NULL)
       glyphs=type_info[i]->glyphs;
-    (void) FormatLocaleString(weight,MagickPathExtent,"%.20g",(double)
-      type_info[i]->weight);
     (void) FormatLocaleFile(file,"  Font: %s\n",name);
     (void) FormatLocaleFile(file,"    family: %s\n",family);
     (void) FormatLocaleFile(file,"    style: %s\n",style);
     (void) FormatLocaleFile(file,"    stretch: %s\n",stretch);
-    (void) FormatLocaleFile(file,"    weight: %s\n",weight);
+    (void) FormatLocaleFile(file,"    weight: %.20g\n",(double)
+      type_info[i]->weight);
     (void) FormatLocaleFile(file,"    glyphs: %s\n",glyphs);
+    (void) FormatLocaleFile(file,"    index: %d\n",(int)
+      type_info[i]->face);
   }
   (void) fflush(file);
   type_info=(const TypeInfo **) RelinquishMagickMemory((void *) type_info);
