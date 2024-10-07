@@ -40,7 +40,7 @@ jobs:
             return fs.readFileSync('errors.txt','utf8').toString();
           result-encoding: string
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v4
         if: steps.build.outcome == 'success'
         with:
           name: imagemagick-7-android
