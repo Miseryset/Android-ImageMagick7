@@ -115,7 +115,7 @@ ForEach ($i in $items) {
     Remove-Item -Path "$i" -Force
 }
 
-Remove-Item "$TmpPath\coders\heic.c" -Force
+# Remove-Item "$TmpPath\coders\heic.c" -Force
 
 Write-Host Writing new mk files...`n
 
