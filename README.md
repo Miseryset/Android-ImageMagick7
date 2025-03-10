@@ -1,5 +1,5 @@
 
-# Android ImageMagick 7.1.1-44
+# Android ImageMagick 7.1.1-45
 
 [![Build](https://github.com/Miseryset/Android-ImageMagick7/actions/workflows/build.yml/badge.svg?event=push)](https://github.com/Miseryset/Android-ImageMagick7/actions/workflows/build.yml) [![CodeQL](https://github.com/Miseryset/Android-ImageMagick7/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Miseryset/Android-ImageMagick7/actions/workflows/codeql-analysis.yml) ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/Miseryset/Android-ImageMagick7?style=plastic)
 
