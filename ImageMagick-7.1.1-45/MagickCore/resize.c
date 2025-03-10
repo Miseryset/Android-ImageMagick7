@@ -4566,17 +4566,39 @@ MagickExport Image *ScaleImage(const Image *image,const size_t columns,
 %    o exception: return any errors or warnings in this structure.
 %
 */
+
+static void url_encode(const char *uri,char *encode_uri)
+{
+  char
+    *p;
+
+  const char
+    *hex = "0123456789ABCDEF";
+
+  for (p=encode_uri; *uri != '\0'; uri++)
+    if ((('a' <= *uri) && (*uri <= 'z')) || (('A' <= *uri) && (*uri <= 'Z')) ||
+        (('0' <= *uri) && (*uri <= '9')) || (strchr("-_.~",*uri) != 0))
+      *p++=(*uri);
+    else
+      {
+        *p++='%';
+        *p++=hex[(*uri >> 4) & 0xF];
+        *p++=hex[*uri & 0xF];
+      }
+  *p='\0';
+}
+
 MagickExport Image *ThumbnailImage(const Image *image,const size_t columns,
   const size_t rows,ExceptionInfo *exception)
 {
 #define SampleFactor  5
 
   char
-    filename[MagickPathExtent],
-    value[MagickPathExtent];
+    encode_uri[3*MagickPathExtent+1] = "/0";
 
   const char
-    *name;
+    *name,
+    *mime_type;
 
   Image
     *thumbnail_image;
@@ -4646,24 +4668,21 @@ MagickExport Image *ThumbnailImage(const Image *image,const size_t columns,
     name=GetNextImageProfile(thumbnail_image);
   }
   (void) DeleteImageProperty(thumbnail_image,"comment");
-  (void) CopyMagickString(value,image->magick_filename,MagickPathExtent);
-  if (strstr(image->magick_filename,"//") == (char *) NULL)
-    (void) FormatLocaleString(value,MagickPathExtent,"file://%s",
-      image->magick_filename);
-  (void) SetImageProperty(thumbnail_image,"Thumb::URI",value,exception);
-  GetPathComponent(image->magick_filename,TailPath,filename);
-  (void) CopyMagickString(value,filename,MagickPathExtent);
-  if ( GetPathAttributes(image->filename,&attributes) != MagickFalse )
+  url_encode(image->magick_filename,encode_uri);
+  if (*image->magick_filename == '/')
+    (void) FormatImageProperty(thumbnail_image,"Thumb::URI","file://%s",
+      encode_uri);
+  else
+    (void) FormatImageProperty(thumbnail_image,"Thumb::URI","./%s",encode_uri);
+  if (GetPathAttributes(image->filename,&attributes) != MagickFalse )
     (void) FormatImageProperty(thumbnail_image,"Thumb::MTime","%.20g",(double)
       attributes.st_mtime);
-  (void) FormatLocaleString(value,MagickPathExtent,"%.20g",(double)
-    attributes.st_mtime);
-  (void) FormatMagickSize(GetBlobSize(image),MagickFalse,"B",MagickPathExtent,
-    value);
-  (void) SetImageProperty(thumbnail_image,"Thumb::Size",value,exception);
-  (void) FormatLocaleString(value,MagickPathExtent,"image/%s",image->magick);
-  LocaleLower(value);
-  (void) SetImageProperty(thumbnail_image,"Thumb::Mimetype",value,exception);
+  (void) FormatImageProperty(thumbnail_image,"Thumb::Size","%.20g",
+    (double) GetBlobSize(image));
+  mime_type=GetImageProperty(image,"mime:type",exception);
+  if (mime_type != (const char *) NULL)
+    (void) SetImageProperty(thumbnail_image,"Thumb::Mimetype",mime_type,
+      exception);
   (void) SetImageProperty(thumbnail_image,"software",MagickAuthoritativeURL,
     exception);
   (void) FormatImageProperty(thumbnail_image,"Thumb::Image::Width","%.20g",
